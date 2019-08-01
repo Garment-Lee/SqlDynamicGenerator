@@ -20,4 +20,13 @@ public class FieldElement {
      * 字段名称
      */
     private String fieldName;
+
+    public FieldElement(){
+
+    }
+
+    public FieldElement(String tableName, String fieldName){
+        this.tableName = tableName;
+        this.fieldName = fieldName;
+    }
 }

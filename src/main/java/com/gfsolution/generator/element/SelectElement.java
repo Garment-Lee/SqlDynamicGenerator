@@ -1,5 +1,6 @@
 package com.gfsolution.generator.element;
 
+import com.gfsolution.generator.element.where.BaseWhereElement;
 import lombok.Data;
 
 import java.util.ArrayList;
@@ -32,7 +33,7 @@ public class SelectElement {
     /**
      * where子句列表
      */
-    private List<WhereElement> whereElementList = new ArrayList<>();
+    private List<BaseWhereElement> whereElementList = new ArrayList<>();
 
     /**
      * order by子句

@@ -2,6 +2,7 @@ package com.gfsolution.generator;
 
 
 import com.gfsolution.generator.element.*;
+import com.gfsolution.generator.element.where.BaseWhereElement;
 
 /**
  * SQL语句创建者
@@ -66,6 +67,7 @@ public class SQLBuilder {
                 return this;
             }
         }
+
         JoinElement joinElement = new JoinElement();
         joinElement.setChildTableName(childTableName);
 
@@ -86,34 +88,12 @@ public class SQLBuilder {
 
     /**
      * 生成where子句对象，参数包括连接符，操作符和操作值
-     * @param searchParam
+     * @param baseWhereElement
      * @return
      */
-    public SQLBuilder where(SearchParam searchParam){
-        WhereElement whereElement = new WhereElement();
-        whereElement.setConnector("and");
-        if (searchParam.intervalSearch){
-            //需要进行区间搜索
-            if (searchParam.searchContentValueOne != null && searchParam.searchContentValueTwo != null){
-                whereElement.setOperator("between");
-            } else if (searchParam.searchContentValueOne != null){
-                whereElement.setOperator(">=");
-            } else if (searchParam.searchContentValueTwo != null){
-                whereElement.setOperator("<=");
-            }
-        } else {
-            whereElement.setOperator("like");
-        }
-        whereElement.setOperatorValueOne(searchParam.searchContentValueOne);
-        whereElement.setOperatorValueTwo(searchParam.searchContentValueTwo);
-        whereElement.setFieldType(searchParam.fieldType);
-        FieldElement fieldElement = new FieldElement();
-        fieldElement.setFieldName(searchParam.searchFieldName);
-        fieldElement.setTableName(searchParam.tableName);
-        whereElement.setFieldElement(fieldElement);
-
+    public SQLBuilder where(BaseWhereElement baseWhereElement){
         //添加到select对象中
-        selectElement.getWhereElementList().add(whereElement);
+        selectElement.getWhereElementList().add(baseWhereElement);
         return this;
     }
 
@@ -141,12 +121,13 @@ public class SQLBuilder {
      * @param fieldTableName
      * @return
      */
-    public SQLBuilder orderBy(String fieldName, String fieldTableName){
+    public SQLBuilder orderBy(String fieldName, String fieldTableName, String sortType){
         OrderByElement orderByElement = new OrderByElement();
         FieldElement fieldElement = new FieldElement();
         fieldElement.setFieldName(fieldName);
         fieldElement.setTableName(fieldTableName);
         orderByElement.setFieldElement(fieldElement);
+        orderByElement.setSortType(sortType);
 
         //添加到select对象中
         selectElement.setOrderByElement(orderByElement);
@@ -217,39 +198,8 @@ public class SQLBuilder {
 
         //where子句
         sqlStringBuilder.append(" where 1 = 1");
-        for (WhereElement whereElement : selectElement.getWhereElementList()){
-            selectString = " " + whereElement.getConnector() + " " + whereElement.getFieldElement().getTableName() + "." + whereElement.getFieldElement().getFieldName();
-
-            if (whereElement.getOperator().equals("between")){
-                if (whereElement.getFieldType() == 1){
-                    selectString = selectString + " " + whereElement.getOperator() + " " + Integer.valueOf(whereElement.getOperatorValueOne()) + " and " + Integer.valueOf(whereElement.getOperatorValueTwo());
-                } else if (whereElement.getFieldType() == 2){
-                    selectString = selectString + " " + whereElement.getOperator() + " " + Float.valueOf(whereElement.getOperatorValueOne()) + " and " + Float.valueOf(whereElement.getOperatorValueTwo());
-                }
-            } else if (whereElement.getOperator().equals(">=") ){
-                if (whereElement.getFieldType() == 1){
-                    selectString = selectString + " " + whereElement.getOperator() + " " + Integer.valueOf(whereElement.getOperatorValueOne());
-                } else if (whereElement.getFieldType() == 2){
-                    selectString = selectString + " " + whereElement.getOperator() + " " + Float.valueOf(whereElement.getOperatorValueOne());
-                }
-            } else if (whereElement.getOperator().equals("<=")){
-                if (whereElement.getFieldType() == 1){
-                    selectString = selectString + " " + whereElement.getOperator() + " " + Integer.valueOf(whereElement.getOperatorValueTwo());
-                } else if (whereElement.getFieldType() == 2){
-                    selectString = selectString + " " + whereElement.getOperator() + " " + Float.valueOf(whereElement.getOperatorValueTwo());
-                }
-            }else if (whereElement.getOperator().equals("=")){
-                if (whereElement.getFieldType() == 0){
-                    selectString = selectString + " " + whereElement.getOperator() + " '" + whereElement.getOperatorValueOne() + "'";
-                } else if (whereElement.getFieldType() == 1){
-                    selectString = selectString + " " + whereElement.getOperator() + " " + Integer.valueOf(whereElement.getOperatorValueOne());
-                } else if (whereElement.getFieldType() == 2){
-                    selectString = selectString + " " + whereElement.getOperator() + " " + Float.valueOf(whereElement.getOperatorValueOne());
-                }
-            } else if (whereElement.getOperator().equals("like")){
-                selectString = selectString + " " + whereElement.getOperator() + " '%" + whereElement.getOperatorValueOne() + "%'";
-            }
-
+        for (BaseWhereElement baseWhereElement : selectElement.getWhereElementList()){
+            selectString = baseWhereElement.sql();
             sqlStringBuilder.append(selectString);
         }
 

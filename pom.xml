@@ -8,6 +8,38 @@
     <artifactId>sql-dynamic-generator</artifactId>
     <version>1.0-SNAPSHOT</version>
 
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <name>GarmentLee</name>
+            <email>garment1991@163.com</email>
+            <organization>GFSolution Community</organization>
+            <organizationUrl>https://github.com/Garment-Lee</organizationUrl>
+        </developer>
+    </developers>
+
+    <scm>
+        <url>https://github.com/Garment-Lee/SqlDynamicGenerator</url>
+        <connection>
+            scm:git:https://github.com/Garment-Lee/SqlDynamicGenerator
+        </connection>
+        <developerConnection>
+            scm:git:https://github.com/Garment-Lee/SqlDynamicGenerator
+        </developerConnection>
+    </scm>
+
+    <issueManagement>
+        <system>Github</system>
+        <url>https://github.com/Garment-Lee/SqlDynamicGenerator/issues</url>
+    </issueManagement>
+
     <dependencies>
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -16,8 +48,5 @@
             <optional>true</optional>
         </dependency>
     </dependencies>
-
-
-
 
 </project>
